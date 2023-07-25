@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
@@ -112,7 +114,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-       int  mScreenHeight = displaymetrics.heightPixels;
+        int mScreenHeight = displaymetrics.heightPixels;
         int mScreenWidth = displaymetrics.widthPixels;
 
         rec.set((int)((double)mScreenWidth*.85),
@@ -139,11 +141,13 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 //                    Log.d(TAG, "parameters: " + mImageParameters.getStringValues());
 //                    Log.d(TAG, "cover height " + topCoverView.getHeight());
                     resizeTopAndBtmCover(topCoverView, btnCoverView);
-
-                    TouchView.mRightTopPosX=mPreviewView.getWidth()-150;
-                    TouchView.mLeftBottomPosY=mPreviewView.getHeight()-150;
-                    TouchView.mRightBottomPosX=mPreviewView.getWidth()-150;
-                    TouchView.mRightBottomPosY=mPreviewView.getHeight()-150;
+                    int width = 700;
+                    int high = 200;
+                    int[] result = TouchView.rec_rightLeftTopDown_from_defined_width_high(mPreviewView.getWidth(), mPreviewView.getHeight(), width, high);
+                    TouchView.mRightTopPosX=mPreviewView.getWidth()-100;  //
+                    TouchView.mLeftBottomPosY=mPreviewView.getHeight()-500; //
+                    TouchView.mRightBottomPosX=mPreviewView.getWidth()-500; //
+                    TouchView.mRightBottomPosY=mPreviewView.getHeight()-500; //
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         mPreviewView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -200,8 +204,21 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                 takePicture();
             }
         });
+
     }
 
+    public Bitmap resizeImage(Bitmap originalBitmap , int newWidth , int newHigh){
+
+        int width = originalBitmap.getWidth();
+        int high = originalBitmap.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHigh = ((float) newHigh) / high;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth , scaleHigh);
+        Bitmap resizedBitmap = Bitmap.createBitmap(originalBitmap,0,0,width,high,matrix,false);
+        return resizedBitmap;
+
+    }
     private View.OnClickListener previewListener = new View.OnClickListener() {
 
         @Override

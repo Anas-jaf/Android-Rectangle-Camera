@@ -95,16 +95,16 @@ public class EditSavePhotoFragment extends Fragment {
         bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
         Bitmap mutableBitmap = bmp.copy(Bitmap.Config.ARGB_8888, true);
 
-//        mutableBitmap = Bitmap.createBitmap(mutableBitmap, (int) TouchView.getmLeftTopPosX(), (int) TouchView.getmLeftTopPosY(),
-//                300, 600);
-//        Bitmap croppedBmp = Bitmap.createBitmap(bmp, (int) TouchView.getmLeftTopPosX(), (int) TouchView.getmLeftTopPosY(),
-//                (int)TouchView.getmRightBottomPosX(), (int)TouchView.getmRightBottomPosY());
+        mutableBitmap = Bitmap.createBitmap(mutableBitmap, (int) TouchView.getmLeftTopPosX(), (int) TouchView.getmLeftTopPosY(),
+                300, 600);
+        Bitmap croppedBmp = Bitmap.createBitmap(bmp, (int) TouchView.getmLeftTopPosX(), (int) TouchView.getmLeftTopPosY(),
+                (int)TouchView.getmRightBottomPosX(), (int)TouchView.getmRightBottomPosY());
 
         Log.e("left", String.valueOf((int) TouchView.getmLeftTopPosX()));
         Log.e("left", String.valueOf((int) TouchView.getmLeftTopPosY()));
         Log.e("wid", String.valueOf(drar.width()));
         Log.e("hei", String.valueOf(drar.height()));
-        //photoImageView.setImageBitmap(croppedBmp);
+        photoImageView.setImageBitmap(croppedBmp);
 
         imageParameters.mIsPortrait =
                 getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;// always true
