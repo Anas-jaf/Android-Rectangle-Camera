@@ -63,7 +63,8 @@ public class CameraActivity extends AppCompatActivity {
 
 
     public void onCancel(View view) {
-        finish();
+//        finish();
+        getSupportFragmentManager().popBackStack();
     }
 
     public void reTake(View view) {

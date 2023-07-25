@@ -3,16 +3,20 @@ package camera.chayon.com.androidcustomcamera.camera;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Camera;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,11 +25,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
+import android.widget.Toast;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Random;
 
 import camera.chayon.com.androidcustomcamera.R;
@@ -110,14 +117,54 @@ public class EditSavePhotoFragment extends Fragment {
         }
         finalBitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
         rotatePicture(rotation, data, photoImageView, mCurrentNormalizedOrientation);
-        savePicture();
-       /* view.findViewById(R.id.save_photo).setOnClickListener(new View.OnClickListener() {
+//        savePicture();
+        view.findViewById(R.id.save_photo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                savePicture();
+//                savePicture();
+                savePictureOptimise();
+                Toast.makeText(getContext() , "file saved" ,Toast.LENGTH_LONG).show();
+
+                Intent    intent=new Intent(getContext(), CameraActivity.class);
+
+                startActivityForResult(intent,0);
+
+                
             }
-        });*/
+        });
     }
+
+    public void savePictureOptimise(){
+        Bitmap finalPhoto = finalBitmap;
+        String imageName =  System.currentTimeMillis() + ".jpg";
+        File path = Environment.getExternalStorageDirectory();
+
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        File file = new File(path,imageName);
+        try{
+            OutputStream fileOpenSave = new FileOutputStream(file);
+            finalPhoto.compress(Bitmap.CompressFormat.JPEG,100,fileOpenSave);
+            fileOpenSave.flush();
+            fileOpenSave.close();
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE,imageName);
+            values.put(MediaStore.Images.Media.DESCRIPTION,"this image is saved from my equationCam application");
+            values.put(MediaStore.Images.Media.DATE_ADDED,System.currentTimeMillis());
+            values.put(MediaStore.Images.Media.MIME_TYPE,"Image/jpg");
+            values.put(MediaStore.Images.Media.DATA,file.getAbsolutePath());
+            Context context = getContext();
+            assert context != null;
+            context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private void rotatePicture(int rotation, byte[] data, ImageView photoImageView, int degreeForRotate) {
         Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
@@ -161,7 +208,7 @@ public class EditSavePhotoFragment extends Fragment {
         Log.e("dads11", String.valueOf(bitmap.getWidth()));
         Log.e("dads11", String.valueOf(bitmap.getHeight()));
         bitmap= rotateImage(bitmap, 90);
-        finalBitmap = rotateImage(bitmap, 180);
+        finalBitmap = rotateImage(bitmap, 0);
         photoImageView.setImageBitmap(bitmap);
     }
 
@@ -181,6 +228,7 @@ public class EditSavePhotoFragment extends Fragment {
         int n = 10000;
         n = generator.nextInt(n);
         String fname = "Image-" + String.valueOf(n) + ".jpg";
+//        String fname = "Image-" + ".jpg";
         File file = new File(myDir, fname);
         if (file.exists()) file.delete();
         try {
