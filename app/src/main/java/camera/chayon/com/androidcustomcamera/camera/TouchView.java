@@ -425,7 +425,7 @@ public class TouchView extends View {
     }
 
     public static int[] rec_rightLeftTopDown_from_defined_width_high(int dWidth, int dHigh, int width, int high) {
-        int[] result = new int[4];
+        int[] result = new int[8];
 
         int width_rest = dWidth - width;
         int high_rest = dHigh - high;
@@ -436,17 +436,25 @@ public class TouchView extends View {
          int right = (int) (0.5 * width_rest); // right
          int down = (int) (0.6 * high_rest); // down
 
-        int[] RT = {left, dHigh};
-        int[] RB = {left, dHigh - down};
-        int[] LT = {dWidth - right, dHigh - top};
-        int[] LB = {dWidth - right, dHigh - down};
+        int[] RT =  {dWidth - left, down};
+        int[] RB =  {dWidth - left, dHigh - top};
+        int[] LT =  {right, down};
+        int[] LB =  {right, dHigh -top };
 
         // Set the results array with the calculated points\
 
         result[0] = RT[0];
-        result[1] = RB[0];
-        result[2] = LT[1];
-        result[3] = LB[1];
+        result[1] = RT[1];
+
+        result[2] = RB[0];
+        result[3] = RB[1];
+
+        result[4] = LT[0];
+        result[5] = LT[1];
+
+        result[6] = LB[0];
+        result[7] = LB[1];
+
 
         return result;
     }

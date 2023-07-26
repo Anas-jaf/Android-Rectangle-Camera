@@ -143,11 +143,19 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                     resizeTopAndBtmCover(topCoverView, btnCoverView);
                     int width = 700;
                     int high = 200;
+
                     int[] result = TouchView.rec_rightLeftTopDown_from_defined_width_high(mPreviewView.getWidth(), mPreviewView.getHeight(), width, high);
-                    TouchView.mRightTopPosX=mPreviewView.getWidth()-100;  //
-                    TouchView.mLeftBottomPosY=mPreviewView.getHeight()-500; //
-                    TouchView.mRightBottomPosX=mPreviewView.getWidth()-500; //
-                    TouchView.mRightBottomPosY=mPreviewView.getHeight()-500; //
+                    TouchView.mRightTopPosX=result[0];  //
+                    TouchView.mRightTopPosY=result[1]; //
+
+                    TouchView.mRightBottomPosX=result[2]; //
+                    TouchView.mRightBottomPosY=result[3]; //
+
+                    TouchView.mLeftTopPosX=result[4]; //
+                    TouchView.mLeftTopPosY=result[5]; //
+
+                    TouchView.mLeftBottomPosX=result[6]; //
+                    TouchView.mLeftBottomPosY=result[7]; //
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         mPreviewView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
